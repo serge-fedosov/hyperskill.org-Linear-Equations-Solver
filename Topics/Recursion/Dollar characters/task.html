@@ -1,0 +1,32 @@
+<h2>Dollar characters</h2>
+<html>
+ <head></head>
+ <body>
+  Given a recursive method that prints the dollar characters.
+  <br>
+  <div>
+   <br>
+  </div>
+  <div>
+   <pre><code class="language-java">public static void printDollars(int n) {
+    if (n &gt; 1) {
+        printDollars(n - 1);
+    }
+        
+    for (int i = 0; i &lt; n; i++) {
+        System.out.print("$");
+    }
+}</code></pre>
+   <br>
+  </div>
+  <div>
+   <div>
+    How many characters will be printed if we call the method as:
+   </div>
+   <br>
+  </div>
+  <div>
+   <pre><code class="language-java">printDollars(7);</code></pre>
+  </div>
+ </body>
+</html>

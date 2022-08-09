@@ -1,0 +1,22 @@
+type: choice
+is_multiple_choice: true
+options:
+- text: Recursive method is a method that calls other methods repeatedly.
+- text: 'Each recursive call creates a new stack frame in the program stack. '
+- text: 'Java provides the special keyword <b>recursive</b> to make a recursive call. '
+- text: A recursion without a base case for stopping cause the <b>StackOverflowError</b>.
+files:
+- name: src/Task.java
+  visible: true
+  text: |
+    // You can experiment here, it won’t be checked
+
+    public class Task {
+      public static void main(String[] args) {
+        // put your code here
+      }
+    }
+  learner_created: false
+feedback_link: https://hyperskill.org/learn/step/3120#comment
+status: Solved
+record: -1

@@ -1,0 +1,27 @@
+type: choice
+is_multiple_choice: false
+options:
+- text: It contain a sequence of '1' with the same size as the input number.
+- text: It contains the binary representation of the given number.
+- text: It contains a sequence of '0' and '1' in which even digits of the input number
+    is replaced by '1', odd digits is replaced by '0'.
+- text: It contains a sequence of '0' and '1' in which even digits of the input number
+    is replaced by '0', odd digits is replaced by '1'.
+- text: It contains a sequence of '0' and '1' with the length <b>n / 2</b> where <b>n</b>
+    is the input number.
+- text: It contains the inversed binary representation of the given number.
+files:
+- name: src/Task.java
+  visible: true
+  text: |
+    // You can experiment here, it won’t be checked
+
+    public class Task {
+      public static void main(String[] args) {
+        // put your code here
+      }
+    }
+  learner_created: false
+feedback_link: https://hyperskill.org/learn/step/3113#comment
+status: Solved
+record: -1
