@@ -6,50 +6,53 @@ import java.io.PrintWriter;
 import java.nio.file.Paths;
 import java.util.Scanner;
 
+import static solver.Complex.isOne;
+import static solver.Complex.isZero;
+
 public class Main {
 
-    public static void changeRows(double[][] m, int i, int j) {
+    public static void changeRows(Complex[][] m, int i, int j) {
         for (int k = 0; k < m[0].length; k++) {
-            double t = m[i][k];
+            Complex t = m[i][k];
             m[i][k] = m[j][k];
             m[j][k] = t;
         }
     }
 
-    public static void changeCols(double[][] m, int i, int j) {
+    public static void changeCols(Complex[][] m, int i, int j) {
         for (int k = 0; k < m.length; k++) {
-            double t = m[k][i];
+            Complex t = m[k][i];
             m[k][i] = m[k][j];
             m[k][j] = t;
         }
     }
 
-    public static boolean findNotZero(double[][] m, int i) {
-        // проверяем строки ниже
+    public static boolean findNotZero(Complex[][] m, int i) {
+        // check the lines below
         for (int j = i + 1; j < m.length; j++) {
-            if (m[j][i] != 0) { // нашли замену
+            if (!isZero(m[j][i])) { // нашли замену
                 changeRows(m, i, j);
                 return true;
             }
         }
 
-        // проверяем столбцы справа
+        // check the columns on the right
         for (int j = i + 1; j < m[0].length - 1; j++) {
-            if (m[i][j] != 0) { // нашли замену
+            if (!isZero(m[i][j])) { // нашли замену
                 changeCols(m, i, j);
                 return true;
             }
         }
 
-        // ищем под главной диагональю
-        // (столбцы правее и ниже текущего)
+        // looking under the main diagonal
+        // (columns to the right and below the current one)
         for (int j = i + 1; j < m.length; j++) {
             for (int k = i + 1; k < m[0].length - 1; k++) {
-                if (m[j][k] != 0) { // нашли замену
-                    // m[i][-] <--> m[j][-] строки
+                if (!isZero(m[j][i])) { // found a replacement
+                    // m[i][-] <--> m[j][-] lines
                     changeRows(m, i, j);
 
-                    // m[-][i] <--> m[-][k] колонки
+                    // m[-][i] <--> m[-][k] columns
                     changeCols(m, i, j);
                     return true;
                 }
@@ -81,58 +84,85 @@ public class Main {
         Scanner scanner = new Scanner(Paths.get(fileInput));
         int n = scanner.nextInt();
         int numberOfEquations = scanner.nextInt();
+        scanner.nextLine();
 
-        double[][] m = new double[numberOfEquations][n + 1];
+        Complex[][] m = new Complex[numberOfEquations][n + 1];
         for (int i = 0; i < numberOfEquations; i++) {
+            String[] items = scanner.nextLine().strip().split("\\s++");
             for (int j = 0; j < n + 1; j++) {
-                m[i][j] = scanner.nextDouble();
+                String[] parts = items[j].split("(?=[+-])");
+                if (parts.length == 2) {
+                    double image = 0;
+                    if (parts[1].equals("i") || parts[1].equals("+i")) {
+                        image = 1;
+                    } else if (parts[0].equals("-i")) {
+                        image = -1;
+                    } else {
+                        image = Double.parseDouble(parts[1].substring(0, parts[1].length() - 1));
+                    }
+                    m[i][j] = new Complex(Double.parseDouble(parts[0]), image);
+                } else {
+                    if (parts[0].contains("i")) {
+                        double image = 0;
+                        if (parts[0].equals("i") || parts[0].equals("+i")) {
+                            image = 1;
+                        } else if (parts[0].equals("-i")) {
+                            image = -1;
+                        } else {
+                            image = Double.parseDouble(parts[0].substring(0, parts[0].length() - 1));
+                        }
+                        m[i][j] = new Complex(0, image);
+                    } else {
+                        m[i][j] = new Complex(Double.parseDouble(parts[0]),0);
+                    }
+                }
             }
         }
 
         scanner.close();
-//        for (int i = 0; i < n; i++) {
+
         for (int i = 0; i < numberOfEquations; i++) {
 
-            // если число на главной диагонали равно 0, пытаемся поменять
-            if (m[i][i] == 0) {
+            // if the number on the main diagonal is 0, we try to change
+            if (isZero(m[i][i])) {
                 if (!findNotZero(m, i)) {
                     break;
                 }
             }
 
-            // приводим к единице первое значение в строке
-            if (m[i][i] != 0 && m[i][i] != 1) {
-                double q = m[i][i];
+            // convert the first value in the string to one
+            if (!isZero(m[i][i]) && !isOne(m[i][i])) {
+                Complex q = m[i][i];
                 for (int j = 0; j < n + 1; j++) {
-                    if (m[i][j] != 0) { // чтобы не образовывался -0.0
-                        m[i][j] /= q;
+                    if (!isZero(m[i][j])) { // not to form -0.0
+                        m[i][j] = m[i][j].div(q);
                     }
                 }
             }
 
-            // приводим к 0 все значения под ним
+            // set to 0 all values below it
             for (int j = i + 1; j < numberOfEquations; j++) {
-                if (m[j][i] != 0) {
-                    double q = m[j][i];
+                if (!isZero(m[j][i])) {
+                    Complex q = m[j][i];
                     for (int k = i; k < n + 1; k++) {
-                        m[j][k] -= q * m[i][k];
+                        m[j][k] = m[j][k].sub(q.mul(m[i][k]));
                     }
                 }
             }
         }
 
-        // проверка отсутствия решений
-        int zeroCount = 0; // количество нулевых строк
+        // checking for the absence of solutions
+        int zeroCount = 0; // number of null lines
         boolean noSolutions = false;
         for (int i = 0; i < numberOfEquations; i++) {
-            double sum = 0;
+            boolean rowZero = true;
             for (int j = 0; j < n; j++) {
-                sum += m[i][j];
+                rowZero = rowZero && isZero(m[i][j]);
             }
-            if (sum == 0) {
-                if (m[i][n] == 0) {
+            if (rowZero) {
+                if (isZero(m[i][n])) {
                     zeroCount++;
-                } else { // нет решений
+                } else { // no solutions
                     noSolutions = true;
                     break;
                 }
@@ -144,27 +174,27 @@ public class Main {
             writer.print("No solutions");
             writer.close();
             return;
-        } else if (numberOfEquations - zeroCount < n) { // количество значимых уравнений меньше количества значимых переменных
-            // значит существует бесконечное количество решений
+        } else if (numberOfEquations - zeroCount < n) { // the number of significant equations is less than the number of significant variables
+            // so there is an infinite number of solutions
             PrintWriter writer = new PrintWriter(new FileWriter(fileOutput, false));
             writer.print("Infinitely many solutions");
             writer.close();
             return;
         }
 
-        // существует одно решение, продолжаем решать
+        // there is only one solution, keep solving
         for (int i = n - 1; i > 0; i--) {
             for (int j = i - 1; j >= 0; j--) {
-                if (m[j][i] != 0) {
-                    double q = m[j][i];
+                if (!isZero(m[j][i])) {
+                    Complex q = m[j][i];
                     for (int k = n; k > i; k--) {
-                        m[j][k] -= q * m[i][k];
+                        m[j][k] = m[j][k].sub(q.mul(m[i][k]));
                     }
                 }
             }
         }
 
-        // сохраняем решение
+        // save the result
         PrintWriter writer = new PrintWriter(new FileWriter(fileOutput, false));
 
         for (int i = 0; i < n; i++) {

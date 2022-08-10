@@ -1,0 +1,24 @@
+type: code
+files:
+- name: src/Main.java
+  visible: true
+  text: |-
+    class Book {
+
+        private String title;
+        private int yearOfPublishing;
+        private String[] authors;
+
+        public Book(String title, int yearOfPublishing, String[] authors) {
+            this.title = title;
+            this.yearOfPublishing = yearOfPublishing;
+            this.authors = authors;
+        }
+    }
+  learner_created: false
+feedback_link: https://hyperskill.org/learn/step/3001#comment
+status: Solved
+feedback:
+  message: <html>Correct solution</html>
+  time: Wed, 10 Aug 2022 06:03:35 UTC
+record: -1

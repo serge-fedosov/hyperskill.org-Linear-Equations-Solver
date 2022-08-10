@@ -1,0 +1,47 @@
+type: code
+files:
+- name: src/Main.java
+  visible: true
+  text: |-
+    import java.util.Scanner;
+
+    class Account {
+
+        private long id;
+        private String code;
+        private Long balance;
+
+        public Account(long id, String code, Long balance) {
+            this.id = id;
+            this.code = code;
+            this.balance = balance;
+        }
+
+        // Override toString() here
+    }
+
+    /* Do not change code below */
+    public class Main {
+
+        public static void main(String[] args) {
+
+            Scanner scanner = new Scanner(System.in);
+
+            String[] parts = scanner.nextLine().split("\\s+");
+
+            long id = Long.parseLong(parts[0]);
+            String code = parts[1];
+            long balance = Long.parseLong(parts[2]);
+
+            Object acc = new Account(id, code, balance);
+
+            System.out.println(acc.toString());
+        }
+    }
+  learner_created: false
+feedback_link: https://hyperskill.org/learn/step/2308#comment
+status: Solved
+feedback:
+  message: <html>Correct solution</html>
+  time: Wed, 10 Aug 2022 05:29:38 UTC
+record: -1
